@@ -1,3 +1,9 @@
+
+
+
+
+
+
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -6,6 +12,11 @@ const OpenAI = require("openai");
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY
   });
+
+  const { MongoClient } = require("mongodb");
+const mongoClient = new MongoClient(
+  process.env.MONGO_DB_KEY
+);
 
 const app = express();
 const PORT = 3000;
@@ -21,17 +32,18 @@ app.post("/send-text", (req, res) => {
   console.log("Received text:", text);
   res.json({ message: "Text received successfully", text });
 
-  async function main() {
+  async function main(param) {
     const embedding = await openai.embeddings.create({
       model: "text-embedding-ada-002",
-      input: text,
+      input: param,
       encoding_format: "float",
     });
   
     console.log(embedding.data[0].embedding);
+    return embedding.data[0].embedding
   }
   
-  main();
+  main(text);
 
 
 
